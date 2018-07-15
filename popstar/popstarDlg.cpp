@@ -96,6 +96,7 @@ BEGIN_MESSAGE_MAP(CPopstarDlg, CDialog)
 	ON_WM_RBUTTONDOWN()
 	ON_BN_CLICKED(IDC_Solve, OnSolve)
 	//}}AFX_MSG_MAP
+	ON_STN_CLICKED(IDC_show, &CPopstarDlg::OnStnClickedshow)
 END_MESSAGE_MAP()
 
 /////////////////////////////////////////////////////////////////////////////
@@ -255,13 +256,13 @@ reg.CreatePolygonRgn(b, 4, ALTERNATE);
 CBrush brush;
 int rander=rand()%5;
 ransto[i][j]=rander;
-judge[i][j]=true;//±íÊ¾²»·ûºÏÒªÇó
-empty[i][j]=true;//±íÊ¾²»Îª¿Õ
-if(rander==0){	brush.CreateSolidBrush(RGB(227,23,13));}//ºì
-else if(rander==1){	brush.CreateSolidBrush(RGB(160,32,240));}//×Ï
-else if(rander==2){	brush.CreateSolidBrush(RGB(255,255,0));}//»Æ
-else if(rander==3){	brush.CreateSolidBrush(RGB(3,168,158));}//À¶
-else if(rander==4){	brush.CreateSolidBrush(RGB(127,255,0));}//ÂÌ
+judge[i][j]=true;//è¡¨ç¤ºä¸ç¬¦åˆè¦æ±‚
+empty[i][j]=true;//è¡¨ç¤ºä¸ä¸ºç©º
+if(rander==0){	brush.CreateSolidBrush(RGB(227,23,13));}//çº¢
+else if(rander==1){	brush.CreateSolidBrush(RGB(160,32,240));}//ç´«
+else if(rander==2){	brush.CreateSolidBrush(RGB(255,255,0));}//é»„
+else if(rander==3){	brush.CreateSolidBrush(RGB(3,168,158));}//è“
+else if(rander==4){	brush.CreateSolidBrush(RGB(127,255,0));}//ç»¿
 CBrush *pOldBrush =dc.SelectObject(&brush);
 dc.FillRgn(&reg, &brush);
 brush.DeleteObject();
@@ -303,11 +304,11 @@ for(int i=0;i<10;i++)
 reg.CreatePolygonRgn(b, 4, ALTERNATE);
 CBrush brush;
 int rander=ransto[i][j];
-if(rander==0){	brush.CreateSolidBrush(RGB(227,23,13));}//ºì
-else if(rander==1){	brush.CreateSolidBrush(RGB(160,32,240));}//×Ï
-else if(rander==2){	brush.CreateSolidBrush(RGB(255,255,0));}//»Æ
-else if(rander==3){	brush.CreateSolidBrush(RGB(3,168,158));}//À¶
-else if(rander==4){	brush.CreateSolidBrush(RGB(127,255,0));}//ÂÌ
+if(rander==0){	brush.CreateSolidBrush(RGB(227,23,13));}//çº¢
+else if(rander==1){	brush.CreateSolidBrush(RGB(160,32,240));}//ç´«
+else if(rander==2){	brush.CreateSolidBrush(RGB(255,255,0));}//é»„
+else if(rander==3){	brush.CreateSolidBrush(RGB(3,168,158));}//è“
+else if(rander==4){	brush.CreateSolidBrush(RGB(127,255,0));}//ç»¿
 else {brush.CreateSolidBrush(RGB(255,255,255));}
 CBrush *pOldBrush =dc.SelectObject(&brush);
 dc.FillRgn(&reg, &brush);
@@ -328,7 +329,7 @@ for(int i=0;i<10;i++)
 {deal(i,j);
 }
 }
-for(i=0;i<10;i++)
+for(int i=0;i<10;i++)
 {move(i,9);
 if(isempty) {break;}
 isempty=true;
@@ -355,7 +356,15 @@ for(int i=0;i<10;i++)
 void CPopstarDlg::OnLButtonDown(UINT nFlags, CPoint point) 
 {
 	// TODO: Add your message handler code here and/or call default
-	start=1;
+	CRect rc2;
+	GetDlgItem(IDC_show)->GetWindowRect(&rc2);
+    ScreenToClient(&rc2);
+    wx=rc2.left;
+    wy=rc2.top;
+	int width=rc2.Width();
+    int height=rc2.Height();
+	if(point.x-wx>=0&&point.x-wx<=width&&point.y-wy>=0&&point.y-wy<=height)
+	{start=1;}
 	CDialog::OnLButtonDown(nFlags, point);
 }
 
@@ -375,7 +384,7 @@ if(y<9)check(x,y+1,a);
 
 void CPopstarDlg::deal(int x, int y)
 {if(judge[x][y]==false)
-{	ransto[x][y]=7;empty[x][y]=false;//×ÔÉÏ¶øÏÂ
+{	ransto[x][y]=7;empty[x][y]=false;//è‡ªä¸Šè€Œä¸‹
 while(y>0)
 {if(ransto[x][y-1]==7) break;
 ransto[x][y]=ransto[x][y-1];empty[x][y]=empty[x][y-1];judge[x][y]=judge[x][y-1];y--;}
@@ -387,13 +396,13 @@ ransto[x][y]=7;empty[x][y]=false;
 
 void CPopstarDlg::move(int x, int y)
 {
-for(int i=x+1;i<10;i++)//ÅĞ¶ÏÓÒ±ßÊÇ·ñÎª¿Õ
+for(int i=x+1;i<10;i++)//åˆ¤æ–­å³è¾¹æ˜¯å¦ä¸ºç©º
 {if(empty[i][y])isempty=false;}
-if(ransto[x][y]==7&&x<9&&!isempty)//×ÔÓÒÏò×ó
+if(ransto[x][y]==7&&x<9&&!isempty)//è‡ªå³å‘å·¦
 {
 int nextx=x+1;
 while(ransto[nextx][y]==7){nextx++;}
-for(i=0;i<10;i++)
+for(int i=0;i<10;i++)
 {ransto[x][i]=ransto[nextx][i];empty[x][i]=empty[nextx][i];judge[x][i]=judge[nextx][i];
 ransto[nextx][i]=7;empty[nextx][i]=false;}
 
@@ -455,13 +464,13 @@ m_goal="Goal\r\n"+p;
 }
 
 
-CPoint line[50];//´æ´¢¿ÉÏû³ıÎ»ÖÃ£»
-int linecount=0;//¼ÇÂ¼¿ÉÏû³ı¿éÊı
-bool isjudge[10][10];//ÓÃÓÚ¼ÇÂ¼µãÊÇ·ñ¼ì²é¹ı
-int count0,count1,count2,count3,count4;//¼ÇÂ¼Ã¿ÖÖÑÕÉ«¸öÊı
-int cx,cy;//Êı×é±àºÅ
-double pcount;//ÓÃÓÚ¼ÇÂ¼×îĞ¡valueÖµ
-int left,right,top,bottom;//¼ÇÂ¼¿ÉÏû³ı¿éµÄ×î×ó¡¢×îÓÒ¡¢×îÏÂ¡¢×îÉÏÖµ	
+CPoint line[50];//å­˜å‚¨å¯æ¶ˆé™¤ä½ç½®ï¼›
+int linecount=0;//è®°å½•å¯æ¶ˆé™¤å—æ•°
+bool isjudge[10][10];//ç”¨äºè®°å½•ç‚¹æ˜¯å¦æ£€æŸ¥è¿‡
+int count0,count1,count2,count3,count4;//è®°å½•æ¯ç§é¢œè‰²ä¸ªæ•°
+int cx,cy;//æ•°ç»„ç¼–å·
+double pcount;//ç”¨äºè®°å½•æœ€å°valueå€¼
+int left,right,top,bottom;//è®°å½•å¯æ¶ˆé™¤å—çš„æœ€å·¦ã€æœ€å³ã€æœ€ä¸‹ã€æœ€ä¸Šå€¼	
 
 void CPopstarDlg::OnSolve() 
 {
@@ -469,7 +478,7 @@ void CPopstarDlg::OnSolve()
 linecount=2;
 while(linecount>1)	
 {	int i,j;
-	int solve[10][10];//×´Ì¬±£´æ
+	int solve[10][10];//çŠ¶æ€ä¿å­˜
 	bool so_empty[10][10];
 	bool so_judge[10][10];
 
@@ -479,7 +488,7 @@ while(linecount>1)
 	so_empty[i][j]=empty[i][j];
 	so_judge[i][j]=judge[i][j];}
 	}
-count0=0,count1=0,count2=0,count3=0,count4=0;//¼ÇÂ¼Ã¿ÖÖÑÕÉ«¸öÊı
+count0=0,count1=0,count2=0,count3=0,count4=0;//è®°å½•æ¯ç§é¢œè‰²ä¸ªæ•°
 pcount=100000;
 
 for(i=0;i<10;i++)
@@ -493,7 +502,7 @@ else if(ransto[i][j]==4) count4++;}
 }
 count=0;linecount=0;
 int num=0;int selecttop;
-for(i=0;i<10;i++)//Ñ°ÕÒ×îĞ¡valueÊı
+for(i=0;i<10;i++)//å¯»æ‰¾æœ€å°valueæ•°
 {for(j=0;j<10;j++)
 {if(!isjudge[i][j]&&empty[i][j])
 {	left=i;right=i;top=j;bottom=j;
@@ -586,7 +595,7 @@ int py=y;
 CPoint b[4];
 check(px,py,ransto[px][py]);
 grade(count);
-for(i=0;i<10;i++)
+for(int i=0;i<10;i++)
 {for(int j=0;j<10;j++)
 {b[0].x=i*width+1;b[0].y=j*height+1;
   b[1].x=i*width+width-1;b[1].y=j*height+1;
@@ -595,11 +604,11 @@ for(i=0;i<10;i++)
 reg.CreatePolygonRgn(b, 4, ALTERNATE);
 CBrush brush;
 int rander=ransto[i][j];
-if(rander==0){	brush.CreateSolidBrush(RGB(227,23,13));}//ºì
-else if(rander==1){	brush.CreateSolidBrush(RGB(160,32,240));}//×Ï
-else if(rander==2){	brush.CreateSolidBrush(RGB(255,255,0));}//»Æ
-else if(rander==3){	brush.CreateSolidBrush(RGB(3,168,158));}//À¶
-else if(rander==4){	brush.CreateSolidBrush(RGB(127,255,0));}//ÂÌ
+if(rander==0){	brush.CreateSolidBrush(RGB(227,23,13));}//çº¢
+else if(rander==1){	brush.CreateSolidBrush(RGB(160,32,240));}//ç´«
+else if(rander==2){	brush.CreateSolidBrush(RGB(255,255,0));}//é»„
+else if(rander==3){	brush.CreateSolidBrush(RGB(3,168,158));}//è“
+else if(rander==4){	brush.CreateSolidBrush(RGB(127,255,0));}//ç»¿
 else {brush.CreateSolidBrush(RGB(255,255,255));}
 CBrush *pOldBrush =dc.SelectObject(&brush);
 dc.FillRgn(&reg, &brush);
@@ -623,7 +632,7 @@ for(int i=0;i<10;i++)
 {deal(i,j);
 }
 }
-for(i=0;i<10;i++)
+for(int i=0;i<10;i++)
 {move(i,9);
 if(isempty) {break;}
 isempty=true;
@@ -655,11 +664,11 @@ CPoint b[4];
 reg.CreatePolygonRgn(b, 4, ALTERNATE);
 CBrush brush;
 int rander=ransto[i][j];
-if(rander==0){	brush.CreateSolidBrush(RGB(227,23,13));}//ºì
-else if(rander==1){	brush.CreateSolidBrush(RGB(160,32,240));}//×Ï
-else if(rander==2){	brush.CreateSolidBrush(RGB(255,255,0));}//»Æ
-else if(rander==3){	brush.CreateSolidBrush(RGB(3,168,158));}//À¶
-else if(rander==4){	brush.CreateSolidBrush(RGB(127,255,0));}//ÂÌ
+if(rander==0){	brush.CreateSolidBrush(RGB(227,23,13));}//çº¢
+else if(rander==1){	brush.CreateSolidBrush(RGB(160,32,240));}//ç´«
+else if(rander==2){	brush.CreateSolidBrush(RGB(255,255,0));}//é»„
+else if(rander==3){	brush.CreateSolidBrush(RGB(3,168,158));}//è“
+else if(rander==4){	brush.CreateSolidBrush(RGB(127,255,0));}//ç»¿
 else {brush.CreateSolidBrush(RGB(255,255,255));}
 CBrush *pOldBrush =dc.SelectObject(&brush);
 dc.FillRgn(&reg, &brush);
@@ -688,12 +697,18 @@ for(int i=0;i<10;i++)
 	}
 }
 
-double CPopstarDlg::getvalue(int left, int right, int top, int bottom, int count,int realcount)//ÖµĞ¡µÄÏÈ´¦Àí
-{int width1=right-left+1;//Ô½¿íÔ½ÏÈ´¦Àí
-int height1=top-bottom+1;//Ô½¸ßÔ½Íí´¦Àí
-count=count;//ÑÕÉ«Ô½ÉÙÔ½ÏÈ´¦Àí
-int center=(top+bottom+1)/2;//Ô½ÍùÉÏÔ½ÏÈ´¦Àí
+double CPopstarDlg::getvalue(int left, int right, int top, int bottom, int count,int realcount)//å€¼å°çš„å…ˆå¤„ç†
+{int width1=right-left+1;//è¶Šå®½è¶Šå…ˆå¤„ç†
+int height1=top-bottom+1;//è¶Šé«˜è¶Šæ™šå¤„ç†
+count=count;//é¢œè‰²è¶Šå°‘è¶Šå…ˆå¤„ç†
+int center=(top+bottom+1)/2;//è¶Šå¾€ä¸Šè¶Šå…ˆå¤„ç†
 int mul=height1/width1;
 return center+(count-realcount)+mul*10;
 
+}
+
+
+void CPopstarDlg::OnStnClickedshow()
+{
+	// TODO: åœ¨æ­¤æ·»åŠ æ§ä»¶é€šçŸ¥å¤„ç†ç¨‹åºä»£ç 
 }
